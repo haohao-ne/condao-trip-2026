@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Côn Đảo 3N2Đ · Biển xanh thiên đường</title>
+  <style>
+    :root {
+      --color-text-primary: #111827;
+      --color-text-secondary: #4b5563;
+      --color-text-tertiary: #9ca3af;
+      --color-border-tertiary: #e5e7eb;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f8fafc;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+      --shadow-soft: 0 18px 50px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(134, 239, 172, 0.28), transparent 28%),
+        linear-gradient(180deg, #f0fdf4 0%, #f8fafc 42%, #ffffff 100%);
+      color: var(--color-text-primary);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    .shell {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .content { padding: 0 18px 24px; }
+
+    .header {
+      text-align: center;
+      padding: 26px 18px 18px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subhead { font-size: 13px; color: var(--color-text-secondary); }
+
+    .notice {
+      margin: 18px 0 16px;
+      padding: 12px 16px;
+      background: #ecfdf5;
+      border: 0.5px solid #10b981;
+      border-radius: var(--border-radius-md);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .notice strong { display: block; margin-bottom: 4px; color: #065f46; }
+    .notice span { color: #047857; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    .summary-card {
+      background: var(--color-background-secondary);
+      border-radius: var(--border-radius-md);
+      padding: 14px 12px;
+      text-align: center;
+      border: 1px solid rgba(229, 231, 235, 0.7);
+    }
+
+    .summary-label { font-size: 12px; color: var(--color-text-secondary); }
+
+    .summary-value {
+      margin-top: 4px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .summary-note { margin-top: 4px; font-size: 11px; color: var(--color-text-tertiary); }
+
+    .day-card { margin-bottom: 10px; }
+
+    .day-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 16px;
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      color: var(--color-text-primary);
+      transition: all 0.2s ease;
+    }
+
+    .day-toggle.open {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .day-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      min-width: 0;
+    }
+
+    .day-badge {
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .day-title { font-size: 14px; font-weight: 700; line-height: 1.35; }
+    .day-date { font-size: 11px; color: var(--color-text-tertiary); }
+
+    .day-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .day-cost { font-size: 13px; color: var(--color-text-secondary); }
+
+    .arrow { font-size: 12px; transition: transform 0.2s ease; }
+    .day-toggle.open .arrow { transform: rotate(180deg); }
+
+    .day-body {
+      border: 0.5px solid transparent;
+      border-top: none;
+      border-bottom-left-radius: var(--border-radius-md);
+      border-bottom-right-radius: var(--border-radius-md);
+      padding: 12px 0;
+    }
+
+    .spot {
+      display: grid;
+      grid-template-columns: 58px 1fr auto;
+      gap: 8px;
+      padding: 7px 16px;
+      align-items: start;
+    }
+
+    .spot-time, .note-only {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .spot-time { padding-top: 2px; }
+
+    .spot-name { font-size: 13px; font-weight: 700; line-height: 1.4; }
+    .spot-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+
+    .spot-price { min-width: 72px; text-align: right; }
+
+    .price { font-size: 13px; font-weight: 700; }
+    .price-note { font-size: 11px; color: var(--color-text-tertiary); }
+
+    .option-box {
+      margin: 10px 16px;
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 0.5px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .option-label {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      gap: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+      transition: background 0.15s ease;
+    }
+
+    .choice:last-child { border-bottom: none; }
+
+    .radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 999px; }
+
+    .choice-name { font-size: 13px; font-weight: 700; line-height: 1.4; }
+    .choice-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+
+    .choice-price { min-width: 66px; text-align: right; flex-shrink: 0; }
+
+    .pill {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: #059669;
+      vertical-align: middle;
+    }
+
+    .day-total {
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 16px 0;
+      margin: 8px 16px 0;
+      border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .budget, .info-card {
+      margin-top: 18px;
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .budget-title, .info-title {
+      padding: 12px 16px;
+      background: var(--color-background-secondary);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .budget-row {
+      display: grid;
+      grid-template-columns: 1fr 88px;
+      gap: 8px;
+      padding: 10px 16px;
+      align-items: center;
+      font-size: 13px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+
+    .budget-row:last-child { border-bottom: none; }
+    .budget-label { font-weight: 700; }
+
+    .budget-note { margin-top: 2px; font-size: 11px; color: var(--color-text-tertiary); }
+    .budget-value { text-align: right; color: var(--color-text-secondary); }
+
+    .budget-total {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--color-background-secondary);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .budget-total div:last-child { text-align: right; }
+
+    .info-body {
+      padding: 16px 18px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+    }
+
+    .footer {
+      margin-top: 16px;
+      padding: 14px 2px 0;
+      border-top: 0.5px solid var(--color-border-tertiary);
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      line-height: 1.6;
+    }
+
+    /* Flight card */
+    .flight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0 6px;
+    }
+
+    .flight-card {
+      border-radius: 12px;
+      padding: 12px 14px;
+      border: 0.5px solid rgba(0,0,0,0.08);
+    }
+
+    .flight-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .flight-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .flight-airport { font-size: 18px; font-weight: 800; }
+    .flight-time { font-size: 13px; font-weight: 700; color: var(--color-text-secondary); }
+    .flight-code { font-size: 11px; color: var(--color-text-tertiary); text-align: center; }
+    .flight-dash { flex: 1; border-top: 1.5px dashed rgba(0,0,0,0.15); margin: 0 4px; }
+
+    @media (max-width: 640px) {
+      .page { padding: 10px 10px 28px; }
+      .shell { border-radius: 20px; }
+      .content { padding: 0 10px 18px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .flight-grid { grid-template-columns: 1fr; }
+      .day-toggle, .spot, .choice, .budget-row, .budget-total {
+        grid-template-columns: 1fr;
+      }
+      .day-toggle { align-items: flex-start; }
+      .day-right, .spot-price, .choice-price { text-align: left; }
+      .day-total { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <div class="header">
+        <div class="eyebrow">Lịch trình tương tác · 1 người · Hè 2026</div>
+        <h1>Côn Đảo 3N2Đ · Biển xanh thiên đường 🌊🐢</h1>
+        <div class="subhead">SGN → VCS · 09–11/05/2026 · Chọn option bên dưới để tùy chỉnh chi phí</div>
+      </div>
+
+      <div class="content">
+        <div class="notice">
+          <strong>✈️ Thông tin chuyến bay · PNR: D2UAIJ</strong>
+          <span>
+            Đi: VN-1859 · SGN 12:10 → VCS 13:05 (09/05) · Hành lý: 10kg xách tay + 23kg ký gửi<br>
+            Về: VN-8062 · VCS 13:40 → SGN 14:45 (11/05) · Nhớ mang CCCD/Hộ chiếu
+          </span>
+        </div>
+
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div id="daysContainer"></div>
+
+        <div class="budget">
+          <div class="budget-title">💰 Tổng chi phí (tự cập nhật theo lựa chọn)</div>
+          <div id="budgetRows"></div>
+          <div class="budget-total">
+            <div>TỔNG / NGƯỜI</div>
+            <div id="grandTotal"></div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-title">🦞 Food checklist — Đặc sản phải thử</div>
+          <div class="info-body">
+            ✅ Bún riêu cua — Bà Hai Khiêm (ăn sáng cực chất)<br>
+            ✅ Bánh canh ghẹ — Ngọc (trưa ngày 2)<br>
+            ✅ Hải sản tươi sống — Banyan Tree Restaurant<br>
+            ✅ Cocktail + chill — ULA Restaurant & Bar<br>
+            ✅ Kem Côn Đảo dừa tươi (ăn vặt chiều)<br>
+            ✅ Cà phê Win — uống cà phê ngắm biển<br>
+            ✅ Hải sản nướng vỉa hè buổi tối<br>
+            ✅ Cua huỳnh đế / tôm hùm (nếu mùa)
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-title">🌴 Lưu ý chuyến đi</div>
+          <div class="info-body">
+            <strong>Thời tiết:</strong> Tháng 5 — 27–33°C, nắng đẹp, ít mưa. Kem chống nắng SPF 50+, kính râm, mũ rộng vành<br>
+            <strong>Di chuyển:</strong> Nên thuê xe máy (~150k/ngày) để tự do khám phá đảo<br>
+            <strong>Tour Hòn Bảy Cạnh:</strong> Đặt trước qua Mr. Bean: 0976 979 205 — tour cano xem rùa + snorkeling<br>
+            <strong>The Mystery Hotel:</strong> Liên hệ sớm để book phòng view biển<br>
+            <strong>Bãi Đầm Trầu:</strong> Điểm check-in chụp máy bay sát đầu — chỉ cách sân bay ~2km
+          </div>
+        </div>
+
+        <div class="footer">
+          Giá tham khảo 05/2026 ±15–20%. Nhấn chọn các option để thay đổi trải nghiệm + cập nhật tổng chi phí tự động. Tag xanh "ĐỀ XUẤT" là những trải nghiệm local/hot được recommend thêm.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DAYS = [
+      {
+        day: 1, date: "09/05 · Thứ Sáu", title: "Bay vào · Hoàng hôn Bãi Nhát 🌅",
+        color: "#0F766E", bg: "#F0FDFA",
+        spots: [
+          { time: "10:30", name: "Ra sân bay Tân Sơn Nhất", detail: "Nhà ga 3, làm thủ tục VN-1859. Hành lý 10kg + 23kg", cost: 0, note: "Check-in sớm" },
+          { time: "12:10", name: "✈️ Bay SGN → VCS", detail: "Vietnam Airlines VN-1859 · Bay ~55 phút", cost: 0, note: "Vé tính riêng" },
+          { time: "13:05", name: "🛬 Hạ cánh Côn Sơn", detail: "Lấy hành lý, ra ngoài bắt xe/taxi về khách sạn", cost: 100000, note: "Taxi ~100k" },
+          { time: "13:30", name: "🏨 Check-in The Mystery Hotel", detail: "Di chuyển về trung tâm, cất hành lý, thay đồ biển", cost: 0, note: "KS tính riêng" },
+          { time: "15:30", name: "☕ Cà phê Win", detail: "Cà phê view biển tuyệt đẹp — nghỉ ngơi sau chuyến bay", cost: 60000, note: "~60k" },
+          { time: "17:00", name: "🛵 Hoàng hôn Bãi Nhát", detail: "Chạy xe máy hóng gió dọc cung đường ven biển", cost: 0, note: "Miễn phí" },
+          { time: "19:00", name: "🦐 Ăn tối Banyan Tree", detail: "Thưởng thức hải sản tươi sống tại nhà hàng nổi tiếng", cost: 0, note: "Tự chọn" },
+          { time: "20:30", name: "🍹 ULA Restaurant & Bar", detail: "Uống cocktail, thư giãn buổi tối nghe sóng biển", cost: 0, note: "Tự chọn" },
+        ],
+        options: [
+          {
+            id: "xe_d1", label: "🛵 Phương tiện di chuyển",
+            default: 0,
+            choices: [
+              { name: "Taxi/xe ôm theo chuyến", detail: "Tiện lợi, không cần lo chỗ đậu xe", cost: 200000, note: "~200k/ngày" },
+              { name: "Thuê xe máy cả ngày", detail: "Tự do khám phá, chạy cả đảo — cực kỳ khuyến khích!", cost: 150000, note: "~150k/ngày", upgraded: true },
+            ]
+          },
+          {
+            id: "dinner_d1", label: "🍽 Bữa tối",
+            default: 0,
+            choices: [
+              { name: "Hải sản vỉa hè gần cảng", detail: "Tôm hùm, ghẹ, ốc nướng — giá bình dân, đông vui", cost: 250000, note: "~250k" },
+              { name: "Banyan Tree Restaurant", detail: "Hải sản tươi sống cao cấp, view biển lãng mạn", cost: 500000, note: "~500k", upgraded: true },
+            ]
+          },
+        ]
+      },
+      {
+        day: 2, date: "10/05 · Thứ Bảy", title: "Tour Hòn Bảy Cạnh · Rùa biển & Snorkeling 🐢🤿",
+        color: "#0369A1", bg: "#F0F9FF",
+        spots: [
+          { time: "07:00", name: "🍜 Bún riêu cua Bà Hai Khiêm", detail: "Ăn sáng sớm — quán đông nhưng cực ngon (quán ốc)", cost: 50000, note: "~50k" },
+          { time: "08:00", name: "🚤 Tour Hòn Bảy Cạnh", detail: "Đi cano: ngắm rùa đẻ, thả rùa con, tắm biển, snorkeling san hô", cost: 0, note: "Xem option" },
+          { time: "12:30", name: "🦀 Bánh canh ghẹ Ngọc", detail: "Ăn trưa đặc sản địa phương, sau đó về KS nghỉ ngơi", cost: 80000, note: "~80k" },
+          { time: "14:30", name: "📸 Bãi Đầm Trầu", detail: "Bãi biển đẹp, góc chụp máy bay sát đầu — siêu đẹp!", cost: 0, note: "Miễn phí" },
+          { time: "16:30", name: "🍦 Kem Côn Đảo dừa tươi", detail: "Ăn vặt chiều — kem đặc sản nổi tiếng của đảo", cost: 30000, note: "~30k" },
+          { time: "19:00", name: "🌙 Tự do buổi tối", detail: "Mua quà lưu niệm, dạo bãi biển, ghé ULA uống nước", cost: 0, note: "Tự chọn" },
+        ],
+        options: [
+          {
+            id: "tour_d2", label: "🐢 Tour Hòn Bảy Cạnh (Mr. Bean: 0976 979 205)",
+            default: 1,
+            choices: [
+              { name: "Tour cơ bản — cano + tắm biển", detail: "Đi cano ra đảo, tắm biển, ngắm san hô từ xa", cost: 350000, note: "~350k" },
+              { name: "Tour đầy đủ — cano + snorkeling + xem rùa", detail: "Full experience: ngắm rùa đẻ/thả rùa con + snorkeling + tắm biển — ĐỈNH nhất Côn Đảo!", cost: 550000, note: "~550k", upgraded: true },
+            ]
+          },
+          {
+            id: "dinner_d2", label: "🍽 Bữa tối ngày 2",
+            default: 0,
+            choices: [
+              { name: "Hải sản nướng tại cảng", detail: "Mực nướng, tôm nướng, bạch tuộc — nhậu chill bên biển", cost: 200000, note: "~200k" },
+              { name: "ULA Restaurant & Cocktails", detail: "Cocktail đặc sản + đồ ăn fusion — chill view biển ban đêm", cost: 350000, note: "~350k", upgraded: true },
+            ]
+          },
+        ]
+      },
+      {
+        day: 3, date: "11/05 · Chủ Nhật", title: "Dạo đảo · Bay về 🌺✈️",
+        color: "#9333EA", bg: "#FAF5FF",
+        spots: [
+          { time: "08:30", name: "🥐 Ăn sáng / Brunch", detail: "Tại khách sạn hoặc ghé ULA ăn brunch", cost: 0, note: "Xem option" },
+          { time: "09:30", name: "📷 Tự do dạo đảo", detail: "Chụp ảnh kỷ niệm, mua cơ sản lưu niệm, tham quan Nghĩa trang Hàng Dương", cost: 0, note: "Miễn phí" },
+          { time: "11:30", name: "🏨 Check-out khách sạn", detail: "Dọn dẹp hành lý, gửi đồ khách sạn, ăn trưa nhẹ", cost: 0, note: "" },
+          { time: "12:15", name: "🚖 Ra sân bay Côn Sơn (VCS)", detail: "Làm thủ tục chuyến về VN-8062. Mang CCCD/Hộ chiếu", cost: 100000, note: "Taxi ~100k" },
+          { time: "13:40", name: "✈️ Khởi hành VN-8062", detail: "VCS → SGN · Bay ~65 phút", cost: 0, note: "Vé tính riêng" },
+          { time: "14:45", name: "🛬 Hạ cánh SGN", detail: "Kết thúc chuyến đi tuyệt vời! 🌊", cost: 0, note: "" },
+        ],
+        options: [
+          {
+            id: "brunch_d3", label: "🥗 Bữa sáng / Brunch",
+            default: 0,
+            choices: [
+              { name: "Ăn sáng tại khách sạn", detail: "Sáng kèm phòng — tiết kiệm, tiện lợi", cost: 0, note: "Gồm KS" },
+              { name: "Brunch tại ULA Restaurant", detail: "Brunch view biển lần cuối trước khi về — đáng nhớ!", cost: 180000, note: "~180k", upgraded: true },
+            ]
+          },
+          {
+            id: "qua_d3", label: "🎁 Quà lưu niệm Côn Đảo",
+            default: 0,
+            choices: [
+              { name: "Quà cơ bản — cá khô, nước mắm", detail: "Đặc sản địa phương, gọn nhẹ, dễ mang về", cost: 150000, note: "~150k" },
+              { name: "Set quà đầy đủ", detail: "Cá khô + nước mắm nhĩ + mực rim + kem dừa đóng gói — quà chuẩn nhất!", cost: 350000, note: "~350k", upgraded: true },
+            ]
+          },
+        ]
+      },
+    ];
+
+    const FIXED_COSTS = {
+      flight: { label: "Vé máy bay khứ hồi SGN ↔ VCS", vnd: 2500000, note: "VN-1859 + VN-8062 · PNR: D2UAIJ" },
+      hotel:  { label: "The Mystery Hotel (2 đêm)", vnd: 1400000, note: "Ước tính 700k/đêm × 2 — liên hệ đặt sớm" },
+      xe:     { label: "Xe máy thuê (2 ngày đi đảo)", vnd: 300000, note: "~150k/ngày × 2 ngày" },
+    };
+
+    let openDay = null;
+    const selections = {};
+
+    DAYS.forEach((day) => {
+      (day.options || []).forEach((option) => {
+        selections[option.id] = option.default;
+      });
+    });
+
+    function formatMillion(vnd) {
+      if (vnd >= 1000000) return (vnd / 1e6).toFixed(1) + "tr";
+      return (vnd / 1000).toFixed(0) + "k";
+    }
+
+    function getDynamicTotalVND() {
+      let total = 0;
+      DAYS.forEach((day) => {
+        day.spots.forEach((spot) => { total += spot.cost; });
+        (day.options || []).forEach((option) => {
+          total += option.choices[selections[option.id]].cost;
+        });
+      });
+      return total;
+    }
+
+    function getDayTotal(day) {
+      const spotTotal = day.spots.reduce((sum, spot) => sum + spot.cost, 0);
+      const optionTotal = (day.options || []).reduce((sum, option) => sum + option.choices[selections[option.id]].cost, 0);
+      return spotTotal + optionTotal;
+    }
+
+    function renderSummary() {
+      const dynamicTotal = getDynamicTotalVND();
+      const fixedVND = Object.values(FIXED_COSTS).reduce((sum, item) => sum + item.vnd, 0);
+      const totalVND = fixedVND + dynamicTotal;
+
+      document.getElementById("summaryGrid").innerHTML = `
+        <div class="summary-card">
+          <div class="summary-label">Tổng / người</div>
+          <div class="summary-value">${formatMillion(totalVND)}</div>
+          <div class="summary-note">~$${Math.round(totalVND / 25000)} USD</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Ăn uống + trải nghiệm</div>
+          <div class="summary-value">${formatMillion(dynamicTotal)}</div>
+          <div class="summary-note">Thay đổi theo lựa chọn</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Thời gian</div>
+          <div class="summary-value">3N2Đ</div>
+          <div class="summary-note">09 – 11 / 05 / 2026</div>
+        </div>
+      `;
+      document.getElementById("grandTotal").textContent = `${formatMillion(totalVND)} đ`;
+    }
+
+    function renderBudget() {
+      const dynamicTotal = getDynamicTotalVND();
+      const rows = Object.values(FIXED_COSTS).map((item) => `
+        <div class="budget-row">
+          <div>
+            <div class="budget-label">${item.label}</div>
+            <div class="budget-note">${item.note}</div>
+          </div>
+          <div class="budget-value">${formatMillion(item.vnd)}</div>
+        </div>
+      `).join("");
+
+      document.getElementById("budgetRows").innerHTML = rows + `
+        <div class="budget-row">
+          <div>
+            <div class="budget-label">Ăn uống + vé + trải nghiệm</div>
+            <div class="budget-note">Thay đổi theo lựa chọn ở trên ↑</div>
+          </div>
+          <div class="budget-value"><strong>${formatMillion(dynamicTotal)}</strong></div>
+        </div>
+      `;
+    }
+
+    function renderDays() {
+      const container = document.getElementById("daysContainer");
+
+      container.innerHTML = DAYS.map((day) => {
+        const isOpen = openDay === day.day;
+        const dayTotal = getDayTotal(day);
+
+        const spotsHtml = day.spots.map((spot) => `
+          <div class="spot">
+            <span class="spot-time">${spot.time}</span>
+            <div>
+              <div class="spot-name">${spot.name}</div>
+              <div class="spot-detail">${spot.detail}</div>
+            </div>
+            <div class="spot-price">
+              ${spot.cost > 0
+                ? `<div class="price" style="color:${day.color}">${spot.cost.toLocaleString("en-US")}đ</div><div class="price-note">${spot.note}</div>`
+                : `<div class="note-only">${spot.note}</div>`}
+            </div>
+          </div>
+        `).join("");
+
+        const optionsHtml = (day.options || []).map((option) => {
+          const selectedIndex = selections[option.id];
+          const choicesHtml = option.choices.map((choice, choiceIndex) => {
+            const active = selectedIndex === choiceIndex;
+            return `
+              <div
+                class="choice"
+                onclick="selectOption('${option.id}', ${choiceIndex})"
+                style="background:${active ? day.color + "12" : "transparent"}"
+              >
+                <div class="radio" style="border-color:${active ? day.color : "#d1d5db"}">
+                  ${active ? `<div class="dot" style="background:${day.color}"></div>` : ""}
+                </div>
+                <div>
+                  <div class="choice-name">
+                    ${choice.name}
+                    ${choice.upgraded ? `<span class="pill">ĐỀ XUẤT</span>` : ""}
+                  </div>
+                  <div class="choice-detail">${choice.detail}</div>
+                </div>
+                <div class="choice-price">
+                  ${choice.cost > 0
+                    ? `<div class="price" style="color:${active ? day.color : "var(--color-text-secondary)"}">${choice.cost.toLocaleString("en-US")}đ</div><div class="price-note">${choice.note}</div>`
+                    : `<div class="note-only">${choice.note}</div>`}
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div class="option-box" style="border-color:${day.color}33">
+              <div class="option-label" style="color:${day.color}; border-bottom-color:${day.color}22">${option.label}</div>
+              ${choicesHtml}
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <div class="day-card">
+            <button
+              class="day-toggle ${isOpen ? "open" : ""}"
+              onclick="toggleDay(${day.day})"
+              style="border-color:${isOpen ? day.color : "var(--color-border-tertiary)"}; background:${isOpen ? day.bg : "transparent"}"
+            >
+              <div class="day-left">
+                <span class="day-badge" style="background:${day.color}">N${day.day}</span>
+                <div>
+                  <div class="day-title">${day.title}</div>
+                  <div class="day-date">${day.date}</div>
+                </div>
+              </div>
+              <div class="day-right">
+                <span class="day-cost">${dayTotal.toLocaleString("en-US")}đ</span>
+                <span class="arrow">▼</span>
+              </div>
+            </button>
+            ${isOpen ? `
+              <div class="day-body" style="border-color:${day.color}; background:${day.bg}">
+                ${spotsHtml}
+                ${optionsHtml}
+                <div class="day-total" style="color:${day.color}; border-top-color:${day.color}33">
+                  Tổng ngày ${day.day}: ${dayTotal.toLocaleString("en-US")}đ (~${Math.round(dayTotal / 1000).toLocaleString("en-US")}k VNĐ)
+                </div>
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAll() {
+      renderSummary();
+      renderDays();
+      renderBudget();
+    }
+
+    function toggleDay(day) {
+      openDay = openDay === day ? null : day;
+      renderAll();
+    }
+
+    function selectOption(id, index) {
+      selections[id] = index;
+      renderAll();
+    }
+
+    renderAll();
+    window.toggleDay = toggleDay;
+    window.selectOption = selectOption;
+  </script>
+</body>
+</html>
